@@ -1,0 +1,27 @@
+{
+  "name": "myblog",
+  "version": "1.0.0",
+  "description": "余航的个人博客",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YuHang-Learn/myBlog.git"
+  },
+  "author": "YH",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YuHang-Learn/myBlog/issues"
+  },
+  "homepage": "https://github.com/YuHang-Learn/myBlog#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
