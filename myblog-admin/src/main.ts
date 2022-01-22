@@ -15,15 +15,15 @@ import store from './store'
 
 import '@/utils/filter'
 
-import yhRequest from './utils/service'
-yhRequest.request({
-  url: '/login',
-  method: 'POST',
-  params: {
-    username: 'hpf',
-    password: '123456'
-  }
-})
+// import yhRequest from './utils/service'
+// yhRequest.request({
+//   url: '/login',
+//   method: 'POST',
+//   params: {
+//     username: 'hpf',
+//     password: '123456'
+//   }
+// })
 
 export const app = createApp(App)
 Object.keys(Icons).forEach((key) => {
