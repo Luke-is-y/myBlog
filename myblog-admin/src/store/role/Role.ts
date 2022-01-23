@@ -3,7 +3,7 @@ import { Module } from 'vuex'
 import { IRole } from './types'
 import { IRootState } from '../types'
 
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
 const roleModule: Module<IRole, IRootState> = {
   namespaced: true,

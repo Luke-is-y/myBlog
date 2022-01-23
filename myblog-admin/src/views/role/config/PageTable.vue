@@ -132,9 +132,9 @@ import { defineComponent, PropType, computed, ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
-import { ElNotification, ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
 import YhTable from '@/components/common/table/YhTable.vue'
 import { ITable } from '@/components/common/table/types'
@@ -239,18 +239,7 @@ export default defineComponent({
         })
         .then((res) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
             listRoles()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
           roleMenuVisible.value = false
         })
@@ -286,18 +275,7 @@ export default defineComponent({
         })
         .then((res) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
             listRoles()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
           roleResourceVisible.value = false
         })
@@ -322,18 +300,7 @@ export default defineComponent({
         })
         .then((res) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
             listRoles()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
           isDeleteVisible.value = false
         })

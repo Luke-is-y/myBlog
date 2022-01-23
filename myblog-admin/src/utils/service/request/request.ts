@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
 import type { YhRequestInterceptor, YhRequestConfig } from './type'
-import { ElLoading } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 import { LoadingInstance } from 'element-plus/lib/components/loading/src/loading'
 
 const DEFAULT_LOADING = false
@@ -51,7 +51,12 @@ export default class YHRequest {
         setTimeout(() => {
           this.loading?.close()
         }, 3000)
-
+        if (res.data.success && res.data.msg) {
+          ElMessage({
+            message: res.data.msg,
+            type: 'success'
+          })
+        }
         return res
       },
       (err) => {

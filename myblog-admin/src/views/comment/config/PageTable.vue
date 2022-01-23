@@ -74,9 +74,7 @@ import { defineComponent, onMounted, ref, watch, computed, PropType } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
-import { ElNotification } from 'element-plus'
-
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
 import YhTable from '@/components/common/table/YhTable.vue'
 import { ITable } from '@/components/common/table/types'
@@ -141,18 +139,7 @@ export default defineComponent({
         })
         .then((res) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
             listComments()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
         })
     }
@@ -169,18 +156,7 @@ export default defineComponent({
         })
         .then((res) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
             listComments()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
           remove.value = false
         })

@@ -120,9 +120,9 @@ import { defineComponent, PropType, computed, ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
-import { ElNotification, ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
 import YhTable from '@/components/common/table/YhTable.vue'
 import { ITable } from '@/components/common/table/types'
@@ -268,20 +268,9 @@ export default defineComponent({
         })
         .then((res: any) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: '操作成功',
-              type: 'success'
-            })
             // 重新加载菜单
             store.dispatch('userModule/generaMenu')
             listMenus()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: '操作失败',
-              type: 'error'
-            })
           }
           dialogVisible.value = false
         })
@@ -295,20 +284,9 @@ export default defineComponent({
         })
         .then((res) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: '删除成功',
-              type: 'success'
-            })
             // 重新加载菜单
             store.dispatch('userModule/generaMenu')
             listMenus()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
         })
     }

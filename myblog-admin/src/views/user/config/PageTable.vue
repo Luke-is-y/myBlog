@@ -49,9 +49,8 @@ import { useRoute } from 'vue-router'
 import YhTable from '@/components/common/table/YhTable.vue'
 import { ITable } from '@/components/common/table/types'
 
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
-import { ElNotification } from 'element-plus'
 export default defineComponent({
   components: {
     YhTable
@@ -120,18 +119,7 @@ export default defineComponent({
         })
         .then((res: any) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
             getUserListData()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
           isEdit.value = false
         })

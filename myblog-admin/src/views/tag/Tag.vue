@@ -107,9 +107,9 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { ElNotification, ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
-import yhRequest from '@/utils/request/index'
+import yhRequest from '@/utils/service/index'
 
 export default defineComponent({
   setup() {
@@ -195,18 +195,7 @@ export default defineComponent({
           console.log(res)
 
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
             listTags()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
           isDelete.value = false
         })
@@ -252,18 +241,7 @@ export default defineComponent({
           console.log(res)
 
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
             listTags()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
           addOrEdit.value = false
         })

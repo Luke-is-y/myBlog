@@ -4,7 +4,7 @@ import { IUserState } from './type'
 
 import router from '@/router/index'
 
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
 import Layout from '@/layout/index.vue'
 

@@ -243,7 +243,7 @@ import { useRouter, useRoute } from 'vue-router'
 
 import { ElNotification } from 'element-plus'
 
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
 export default defineComponent({
   setup() {
@@ -383,18 +383,7 @@ export default defineComponent({
         })
         .then((res: any) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
             listArticles()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
           updateIsDelete.value = false
         })
@@ -414,19 +403,8 @@ export default defineComponent({
           data
         })
         .then((res: any) => {
-          if (res.data.flag) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
+          if (res.data.code) {
             listArticles()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
           remove.value = false
         })
@@ -479,17 +457,11 @@ export default defineComponent({
           }
         })
         .then((res) => {
-          if (res.data.flag) {
+          if (res.data.code) {
             ElNotification({
               title: '成功',
               message: '置顶成功',
               type: 'success'
-            })
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
             })
           }
           remove.value = false

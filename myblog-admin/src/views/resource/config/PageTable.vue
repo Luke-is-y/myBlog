@@ -104,9 +104,9 @@ import { useRoute } from 'vue-router'
 import YhTable from '@/components/common/table/YhTable.vue'
 import { ITable } from '@/components/common/table/types'
 
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
-import { ElNotification, ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 import { dateFormat } from '@/utils/filter/index'
 export default defineComponent({
@@ -186,18 +186,7 @@ export default defineComponent({
         })
         .then((res) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
             getList()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
         })
     }
@@ -228,19 +217,7 @@ export default defineComponent({
         })
         .then((res) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
-
             getList()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
         })
     }
@@ -267,19 +244,7 @@ export default defineComponent({
         })
         .then((res) => {
           if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
-
             getList()
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
           }
           addModule.value = false
           addResource.value = false

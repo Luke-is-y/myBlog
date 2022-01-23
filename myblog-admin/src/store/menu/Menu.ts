@@ -3,7 +3,7 @@ import { Module } from 'vuex'
 import { IMenu } from './types'
 import { IRootState } from '../types'
 
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
 const menuModule: Module<IMenu, IRootState> = {
   namespaced: true,

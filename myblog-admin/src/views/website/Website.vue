@@ -268,9 +268,8 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
-import { ElNotification } from 'element-plus'
 
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
 export default defineComponent({
   setup() {
@@ -364,19 +363,7 @@ export default defineComponent({
           data: websiteConfigForm.value
         })
         .then((res) => {
-          if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'success'
-            })
-          }
+          console.log(res)
         })
     }
 

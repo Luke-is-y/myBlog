@@ -200,9 +200,9 @@
 import { defineComponent, onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { ElNotification, ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import axios from 'axios'
-import yhRequest from '@/utils/request'
+import yhRequest from '@/utils/service'
 
 // import { mavonEditor } from 'mavon-editor'
 
@@ -347,20 +347,6 @@ export default defineComponent({
         })
         .then((res) => {
           console.log(res)
-
-          if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: '保存草稿成功',
-              type: 'success'
-            })
-          } else {
-            ElNotification({
-              title: '失败',
-              message: '保存草稿失败',
-              type: 'error'
-            })
-          }
         })
       //关闭自动保存功能
       autoSave.value = false
@@ -438,21 +424,6 @@ export default defineComponent({
           data: article.value
         })
         .then((res) => {
-          console.log(res)
-
-          if (res.data.code) {
-            ElNotification({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
-          } else {
-            ElNotification({
-              title: '失败',
-              message: res.data.message,
-              type: 'error'
-            })
-          }
           addOrEdit.value = false
           router.push('/article-list')
         })
@@ -475,19 +446,7 @@ export default defineComponent({
             data: article.value
           })
           .then((res) => {
-            if (res.data.code) {
-              ElNotification({
-                title: '成功',
-                message: '自动保存成功',
-                type: 'success'
-              })
-            } else {
-              ElNotification({
-                title: '失败',
-                message: '自动保存失败',
-                type: 'error'
-              })
-            }
+            console.log(res)
           })
       }
       // 保存本地文章记录
