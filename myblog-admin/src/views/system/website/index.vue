@@ -1,6 +1,6 @@
 <template>
   <el-card class="main-card">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName">
       <!-- 修改信息 -->
       <el-tab-pane label="网站信息" name="info">
         <el-form label-width="100px" :model="websiteConfigForm" label-position="left">
@@ -10,7 +10,7 @@
               drag
               action="http://upload-cn-east-2.qiniup.com"
               :data="{ token }"
-              :on-success="uploadCover"
+              :on-success="webUploadCover"
             >
               <div v-if="websiteConfigForm.websiteAvatar == ''"></div>
               <el-image v-else :src="websiteConfigForm.websiteAvatar" :show-file-list="false" />
@@ -50,12 +50,6 @@
               style="width: 400px"
             />
           </el-form-item>
-          <el-form-item label="第三方登录">
-            <el-checkbox-group v-model="websiteConfigForm.socialLoginList">
-              <el-checkbox label="qq">QQ</el-checkbox>
-              <el-checkbox label="weibo">微博</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
           <el-button
             type="primary"
             size="medium"
@@ -69,40 +63,35 @@
       <!-- 网站公告 -->
       <el-tab-pane label="社交信息" name="notice">
         <el-form label-width="70px" :model="websiteConfigForm">
-          <el-checkbox-group v-model="websiteConfigForm.socialUrlList">
-            <el-form-item label="QQ">
-              <el-input
-                v-model="websiteConfigForm.qq"
-                size="small"
-                style="width: 400px; margin-right: 1rem"
-              />
-              <el-checkbox label="qq">是否展示</el-checkbox>
-            </el-form-item>
-            <el-form-item label="Github">
-              <el-input
-                v-model="websiteConfigForm.github"
-                size="small"
-                style="width: 400px; margin-right: 1rem"
-              />
-              <el-checkbox label="github">是否展示</el-checkbox>
-            </el-form-item>
-            <el-form-item label="Gitee">
-              <el-input
-                v-model="websiteConfigForm.gitee"
-                size="small"
-                style="width: 400px; margin-right: 1rem"
-              />
-              <el-checkbox label="gitee">是否展示</el-checkbox>
-            </el-form-item>
-            <el-button
-              type="primary"
-              size="medium"
-              style="margin-left: 4.375rem"
-              @click="updateWebsiteConfig"
-            >
-              修改
-            </el-button>
-          </el-checkbox-group>
+          <el-form-item label="QQ">
+            <el-input
+              v-model="websiteConfigForm.qq"
+              size="small"
+              style="width: 400px; margin-right: 1rem"
+            />
+          </el-form-item>
+          <el-form-item label="Github">
+            <el-input
+              v-model="websiteConfigForm.github"
+              size="small"
+              style="width: 400px; margin-right: 1rem"
+            />
+          </el-form-item>
+          <el-form-item label="Gitee">
+            <el-input
+              v-model="websiteConfigForm.gitee"
+              size="small"
+              style="width: 400px; margin-right: 1rem"
+            />
+          </el-form-item>
+          <el-button
+            type="primary"
+            size="medium"
+            style="margin-left: 4.375rem"
+            @click="updateWebsiteConfig"
+          >
+            修改
+          </el-button>
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="七牛图床设置">
@@ -145,34 +134,14 @@
             <el-col :md="12">
               <el-form-item label="用户头像">
                 <el-upload
-                  class="avatar-uploader"
-                  action="/api/admin/config/images"
-                  :show-file-list="false"
-                  :on-success="handleUserAvatarSuccess"
+                  class="upload"
+                  drag
+                  action="http://upload-cn-east-2.qiniup.com"
+                  :data="{ token }"
+                  :on-success="userUploadCover"
                 >
-                  <img
-                    v-if="websiteConfigForm.userAvatar"
-                    :src="websiteConfigForm.userAvatar"
-                    class="avatar"
-                  />
-                  <i v-else class="el-icon-plus avatar-uploader-icon" />
-                </el-upload>
-              </el-form-item>
-            </el-col>
-            <el-col :md="12">
-              <el-form-item label="游客头像">
-                <el-upload
-                  class="avatar-uploader"
-                  action="/api/admin/config/images"
-                  :show-file-list="false"
-                  :on-success="handleTouristAvatarSuccess"
-                >
-                  <img
-                    v-if="websiteConfigForm.touristAvatar"
-                    :src="websiteConfigForm.touristAvatar"
-                    class="avatar"
-                  />
-                  <i v-else class="el-icon-plus avatar-uploader-icon" />
+                  <div v-if="websiteConfigForm.userAvatar == ''"></div>
+                  <el-image v-else :src="websiteConfigForm.userAvatar" :show-file-list="false" />
                 </el-upload>
               </el-form-item>
             </el-col>
@@ -269,24 +238,22 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
 
-import yhRequest from '@/utils/service'
+import { getQiniuToken, getWebAllConfig, updateWebConfig } from '@/api/system/website'
 
 export default defineComponent({
   setup() {
     onMounted(() => {
       getWebsiteConfig()
-      yhRequest
-        .request({
-          url: '/getQiniuCloudUpToken',
-          method: 'GET'
-        })
-        .then((res) => {
-          console.log(res)
-          token.value = res.data.data
-        })
+      getQiniuToken().then((res) => {
+        token.value = res.data.data
+      })
     })
     const token = ref('')
-    const websiteConfigForm = ref({
+
+    interface websiteConfig {
+      [key: string]: any
+    }
+    const websiteConfigForm: websiteConfig = ref({
       websiteAvatar: '',
       websiteName: '',
       websiteAuthor: '',
@@ -294,8 +261,6 @@ export default defineComponent({
       websiteNotice: '',
       websiteCreateTime: null,
       websiteRecordNo: '',
-      socialLoginList: [],
-      socialUrlList: [],
       qq: '',
       github: '',
       gitee: '',
@@ -309,7 +274,6 @@ export default defineComponent({
       StoragePath: '', // 存储路径
       // qiniu
       userAvatar: '',
-      touristAvatar: '',
       isReward: 1,
       weiXinQRCode: '',
       alipayQRCode: '',
@@ -322,32 +286,20 @@ export default defineComponent({
     })
     const activeName = ref('info')
 
-    const uploadCover = (response: any) => {
-      console.log(response.fileUrl)
-
+    const webUploadCover = (response: any) => {
       websiteConfigForm.value.websiteAvatar = response.fileUrl
     }
 
-    const getWebsiteConfig = () => {
-      yhRequest
-        .request({
-          url: '/allWebConfig',
-          method: 'GET'
-        })
-        .then((res) => {
-          websiteConfigForm.value = res.data.data
-        })
+    const userUploadCover = (response: any) => {
+      websiteConfigForm.value.userAvatar = response.fileUrl
     }
 
-    const handleClick = (tab: any) => {
-      console.log(tab)
+    const getWebsiteConfig = () => {
+      getWebAllConfig().then((res) => {
+        websiteConfigForm.value = { ...websiteConfigForm.value, ...res.data.data }
+      })
     }
-    const handleUserAvatarSuccess = (response: any) => {
-      websiteConfigForm.value.userAvatar = response.data
-    }
-    const handleTouristAvatarSuccess = (response: any) => {
-      websiteConfigForm.value.touristAvatar = response.data
-    }
+
     const handleWeiXinSuccess = (response: any) => {
       websiteConfigForm.value.weiXinQRCode = response.data
     }
@@ -356,29 +308,27 @@ export default defineComponent({
     }
 
     const updateWebsiteConfig = () => {
-      yhRequest
-        .request({
-          url: '/webConfig',
-          method: 'POST',
-          data: websiteConfigForm.value
-        })
-        .then((res) => {
-          console.log(res)
-        })
+      const websiteConfig: any[] = []
+      Object.keys(websiteConfigForm.value).forEach((key: any) => {
+        if (websiteConfigForm.value[key] && websiteConfigForm.value[key]?.length) {
+          websiteConfig.push({
+            configKey: key,
+            configValue: websiteConfigForm.value[key]
+          })
+        }
+      })
+      updateWebConfig(websiteConfig)
     }
 
     return {
+      token,
       websiteConfigForm,
       activeName,
-
-      handleClick,
-      handleUserAvatarSuccess,
-      handleTouristAvatarSuccess,
       handleWeiXinSuccess,
       handleAlipaySuccess,
       updateWebsiteConfig,
-      uploadCover,
-      token
+      webUploadCover,
+      userUploadCover
     }
   }
 })
