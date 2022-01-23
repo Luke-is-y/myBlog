@@ -3,10 +3,9 @@ import { IRootState } from '../types'
 import { IUserState } from './type'
 
 import router from '@/router/index'
+import { allRoutes } from '@/router/allroutes'
 
 import yhRequest from '@/utils/service'
-
-import Layout from '@/layout/index.vue'
 
 const userModule: Module<IUserState, IRootState> = {
   namespaced: true,
@@ -33,14 +32,16 @@ const userModule: Module<IUserState, IRootState> = {
         if (item.icon != null) {
           item.icon = 'iconfont ' + item.icon
         }
-        if (item.component == 'Layout') {
-          item.component = Layout
-        }
+        item.component = allRoutes.find((val) => {
+          return item.path === val.path
+        })?.component
+
         if (item.children && item.children.length > 0) {
           item.children.forEach((route: any) => {
             route.icon = 'iconfont ' + route.icon
-            const url = route.component
-            route.component = () => import(`@/views${url}`)
+            route.component = allRoutes.find((item) => {
+              return route.path ? item.path === route.path : item.name === route.name
+            })?.component
           })
         }
         router.addRoute(item)
@@ -64,6 +65,8 @@ const userModule: Module<IUserState, IRootState> = {
       })
       window.sessionStorage.setItem('userMenu', JSON.stringify(res.data.data))
       // 添加侧边栏菜单
+      console.log(res.data.data)
+
       commit('saveUserMenuList', res.data.data)
     },
 
