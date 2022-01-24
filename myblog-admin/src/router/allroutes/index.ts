@@ -17,7 +17,7 @@ export const allRoutes = [
     component: () => import('@/views/article/article/index.vue')
   },
   {
-    path: '/articles/:pathMatch(.*)*',
+    path: '/articles/:id',
     component: () => import('@/views/article/article/index.vue')
   },
   {
