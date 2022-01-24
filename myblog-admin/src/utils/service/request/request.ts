@@ -48,13 +48,18 @@ export default class YHRequest {
     this.instance.interceptors.response.use(
       (res) => {
         // 对结果处理
-        setTimeout(() => {
-          this.loading?.close()
-        }, 3000)
-        if (res.data.success && res.data.msg) {
+        this.loading?.close()
+        if (res.data.success) {
+          if (res.data.msg) {
+            ElMessage({
+              message: res.data.msg,
+              type: 'success'
+            })
+          }
+        } else {
           ElMessage({
             message: res.data.msg,
-            type: 'success'
+            type: 'error'
           })
         }
         return res
