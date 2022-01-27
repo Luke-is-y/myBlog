@@ -1,102 +1,56 @@
 <template>
   <el-card class="main-card">
-    <div class="title">{{ route.name }}</div>
-    <!-- 表格操作 -->
-    <div class="operation-container">
-      <el-button type="primary" size="small" @click="openModel(null)"> 新增 </el-button>
-      <el-button
-        type="danger"
-        size="small"
-        :disabled="tagIdList.length == 0"
-        @click="isDelete = true"
-      >
-        批量删除
-      </el-button>
-      <div style="margin-left: auto">
-        <el-input
-          v-model="keywords"
-          prefix-icon="el-icon-search"
-          size="small"
-          placeholder="请输入标签名"
-          style="width: 200px"
-          @keyup.enter="searchTags"
-        />
-        <el-button type="primary" size="small" style="margin-left: 1rem" @click="searchTags">
-          搜索
-        </el-button>
-      </div>
-    </div>
-    <!-- 表格展示 -->
-    <el-table border :data="tagList" @selection-change="selectionChange" v-loading="loading">
-      <!-- 表格列 -->
-      <el-table-column type="selection" width="55" />
-      <el-table-column prop="id" label="id" width="320" />
-
-      <!-- 分类名 -->
-      <el-table-column prop="tagName" label="标签名" width="420" />
-      <!-- 分类创建时间 -->
-      <el-table-column prop="createTime" label="创建时间" width="520" />
-      <!-- <template #default="scope">
-          <i class="el-icon-time" style="margin-right: 5px" />
-          {{ scope.row.createTime }}
-        </template>
-      </el-table-column> -->
-      <!-- 列操作 -->
-      <el-table-column label="操作" align="center">
-        <template #default="scope">
-          <el-button type="primary" size="mini" @click="openModel(scope.row)"> 编辑 </el-button>
-          <el-popconfirm
-            title="确定删除吗？"
-            style="margin-left: 1rem"
-            @confirm="deleteTag(scope.row.id)"
-          >
-            <template v-slot:reference>
-              <el-button size="mini" type="danger"> 删除 </el-button> </template
-            >>
-          </el-popconfirm>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!-- 分页 -->
-    <el-pagination
-      class="pagination-container"
-      background
-      @size-change="sizeChange"
-      @current-change="currentChange"
-      :current-page="current"
-      :page-size="size"
-      :total="count"
-      :page-sizes="[10, 20]"
-      layout="total, sizes, prev, pager, next, jumper"
-    />
-    <!-- 批量删除对话框 -->
-    <el-dialog v-model="isDelete" width="30%">
-      <template v-slot:title>
-        <div class="dialog-title-container">
-          <i class="el-icon-warning" style="color: #ff9900" />提示
+    <yh-table
+      :Data="tagList"
+      v-bind="tableConfig"
+      @add-btn="addEditBtn(null)"
+      @del-btn="delModal = true"
+      @search-btn="searchTag"
+      @selection="selectChange"
+      :page="pageConfig"
+      :page-count="tagCount"
+      @update:page="handlePageStatus"
+    >
+      <template #header>
+        <div class="base-page-title">
+          {{ route.name }}
         </div>
       </template>
-
+      <template #createTime="scope">
+        {{ dateFormat(scope.row.createTime) }}
+      </template>
+      <template #edit="scope">
+        <el-button type="primary" size="mini" @click="addEditBtn(scope.row)"> 编辑 </el-button>
+        <el-popconfirm
+          title="确定删除吗？"
+          style="margin-left: 1rem"
+          @confirm="deleteTag(scope.row.id)"
+        >
+          <template #reference> <el-button size="mini" type="danger"> 删除 </el-button> </template>>
+        </el-popconfirm>
+      </template>
+    </yh-table>
+    <!-- 批量删除对话框 -->
+    <el-dialog v-model="delModal" width="30%" title="提示">
       <div style="font-size: 1rem">是否删除选中项？</div>
-      <template v-slot:footer>
+      <template #footer>
         <div>
-          <el-button @click="isDelete = false">取 消</el-button>
+          <el-button @click="delModal = false">取 消</el-button>
           <el-button type="primary" @click="deleteTag(null)"> 确 定 </el-button>
         </div>
       </template>
     </el-dialog>
     <!-- 添加编辑对话框 -->
-    <el-dialog v-model="addOrEdit" width="30%">
-      <template v-slot:title><div class="dialog-title-container" ref="tagTitle" /></template>
+    <el-dialog v-model="addEditModal" width="30%" :title="tagTitle">
       <el-form label-width="80px" size="medium" :model="tagForm">
         <el-form-item label="标签名">
           <el-input v-model="tagForm.tagName" style="width: 220px" />
         </el-form-item>
       </el-form>
-      <template v-slot:footer>
+      <template #footer>
         <div>
-          <el-button @click="addOrEdit = false">取 消</el-button>
-          <el-button type="primary" @click="addOrEditTag"> 确 定 </el-button>
+          <el-button @click="addEditModal = false">取 消</el-button>
+          <el-button type="primary" @click="confirmAddEditTag"> 确 定 </el-button>
         </div>
       </template>
     </el-dialog>
@@ -104,208 +58,125 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-
+import { useStore } from 'vuex'
+import { tableConfig } from './config/tag.config'
+import { delTags, updateTags } from '@/api/article/tag'
 import { ElMessage } from 'element-plus'
-
-import yhRequest from '@/utils/service/index'
-
+import { dateFormat } from '@/utils/filter'
+import YhTable from '@/components/common/table/YhTable.vue'
 export default defineComponent({
+  components: {
+    YhTable
+  },
   setup() {
     const route = useRoute()
+    const store = useStore()
+
     onMounted(() => {
       listTags()
     })
 
-    const isDelete = ref(false)
-    const loading = ref(true)
-    const addOrEdit = ref(false)
-    const keywords = ref(null)
-    const tagIdList: any = ref([])
-    const tagList = ref([])
+    const tagList = computed(() => store.state.tagModule.tagList)
+    const tagCount = computed(() => store.state.tagModule.tagCount)
+    const keywords = ref('')
+    const pageConfig = ref({
+      current: 1,
+      size: 10
+    })
+    const listTags = () => {
+      store.dispatch('tagModule/getTagList', {
+        current: pageConfig.value.current,
+        size: pageConfig.value.size,
+        keywords: keywords.value
+      })
+    }
+
+    const searchTag = (key: string) => {
+      keywords.value = key
+      listTags()
+    }
+
+    const addEditModal = ref(false)
     const tagForm = ref({
       id: null,
       tagName: ''
     })
-    const current = ref(1)
-    const size = ref(10)
-    const count = ref(0)
-    const tagTitle: any = ref(null)
+    const tagTitle = ref('')
+    const tagIdList = ref()
 
-    const listTags = () => {
-      yhRequest
-        .request({
-          url: '/admin/tags',
-          method: 'GET',
-          params: {
-            current: current.value,
-            size: size.value,
-            keywords: keywords.value
-          }
-        })
-        .then((res: any) => {
-          console.log(res)
-
-          tagList.value = res.data.data.recordList
-          count.value = res.data.data.count
-          console.log(count.value)
-
-          loading.value = false
-        })
-    }
-
-    const selectionChange = (list: any) => {
-      tagIdList.value = []
-      list.forEach((item: any) => {
-        tagIdList.value.push(item.id)
-      })
-    }
-
-    const searchTags = () => {
-      current.value = 1
-      listTags()
-    }
-
-    const sizeChange = (newSize: number) => {
-      size.value = newSize
-      listTags()
-    }
-
-    const currentChange = (cur: number) => {
-      current.value = cur
-      listTags()
-    }
-
-    const deleteTag = (id: any) => {
-      let data = {}
-
-      if (id == null) {
-        data = tagIdList.value
-      } else {
-        data = [id]
-      }
-      yhRequest
-        .request({
-          url: '/admin/tags',
-          method: 'DELETE',
-          data
-        })
-        .then((res: any) => {
-          console.log(res)
-
-          if (res.data.code) {
-            listTags()
-          }
-          isDelete.value = false
-        })
-    }
-
-    const openModel = (tag: any) => {
-      console.log(tag)
-
+    const addEditBtn = (tag: any) => {
       if (tag != null) {
-        tagForm.value = JSON.parse(JSON.stringify(tag))
-        console.log(tagForm)
-
-        if (tagTitle.value) {
-          tagTitle.value.innerHTML = '修改标签'
-        }
+        tagForm.value = { ...tag }
+        tagTitle.value = '修改标签'
       } else {
         tagForm.value.id = null
         tagForm.value.tagName = ''
-        if (tagTitle.value) {
-          tagTitle.value.innerHTML = '添加标签'
-        }
+        tagTitle.value = '添加标签'
       }
-      addOrEdit.value = true
+      addEditModal.value = true
     }
 
-    const addOrEditTag = () => {
+    const confirmAddEditTag = () => {
       if (tagForm.value.tagName.trim() == '') {
         ElMessage({
-          message: '分类名不能为空',
+          message: '标签名不能为空',
           type: 'error'
         })
         return false
       }
-      console.log(tagForm.value)
+      updateTags(tagForm.value).then((res) => {
+        if (res.data.code) {
+          listTags()
+        }
+        addEditModal.value = false
+      })
+    }
 
-      yhRequest
-        .request({
-          url: '/admin/tags',
-          method: 'POST',
-          data: tagForm.value
-        })
-        .then((res: any) => {
-          console.log(res)
+    const delModal = ref(false)
+    const selectChange = (selection: any) => {
+      tagIdList.value = []
+      selection.forEach((item: any) => {
+        tagIdList.value.push(item.id)
+      })
+    }
+    const deleteTag = (id: number | null) => {
+      if (id) {
+        tagIdList.value = [id]
+      }
+      delTags(tagIdList.value).then((res) => {
+        if (res.data.code) {
+          listTags()
+        }
+        delModal.value = false
+      })
+    }
 
-          if (res.data.code) {
-            listTags()
-          }
-          addOrEdit.value = false
-        })
+    // 分页处理
+    const handlePageStatus = (page: { current: number; size: number }) => {
+      pageConfig.value = { ...page }
+      listTags()
     }
 
     return {
       route,
-      isDelete,
-      loading,
-      addOrEdit,
-      keywords,
-      tagIdList,
+      tableConfig,
       tagList,
-      tagForm,
-      current,
-      size,
-      count,
+      tagCount,
+      searchTag,
+      addEditModal,
       tagTitle,
-
-      selectionChange,
-      searchTags,
-      sizeChange,
-      currentChange,
+      tagForm,
+      addEditBtn,
+      confirmAddEditTag,
+      delModal,
+      selectChange,
       deleteTag,
-      openModel,
-      addOrEditTag
+      pageConfig,
+      handlePageStatus,
+      dateFormat
     }
   }
 })
 </script>
-
-<style lang="less" scoped>
-.main-card {
-  min-height: calc(100vh - 126px);
-  .title {
-    position: absolute;
-    left: 0;
-    font-size: 16px;
-    font-weight: 700;
-    color: #202a34;
-  }
-
-  .title:before {
-    content: '';
-    width: 24px;
-    height: 16px;
-    border-left: 3px solid #0081ff;
-    margin-right: 20px;
-  }
-  .operation-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1.25rem;
-    margin-top: 2.25rem;
-  }
-  .pagination-container {
-    float: right;
-    margin-top: 1.25rem;
-    margin-bottom: 1.25rem;
-  }
-  .dialog-title-container {
-    display: flex;
-    align-items: center;
-    font-weight: 700;
-  }
-}
-</style>

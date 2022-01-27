@@ -1,13 +1,9 @@
 import yhRequest from '@/utils/service'
 import { AxiosResponse } from 'axios'
 
-interface getTagsParams {
-  current?: number
-  size?: number
-  keywords?: string
-}
+// 发布或修改文章相关接口
 
-export function publishArticle(data: getTagsParams): Promise<AxiosResponse<any, any>> {
+export function publishArticle(data: any): Promise<AxiosResponse<any, any>> {
   return yhRequest.request({
     url: '/admin/articles',
     method: 'POST',
@@ -28,5 +24,42 @@ export function uploadImg(formdata: any): Promise<AxiosResponse<any, any>> {
     method: 'POST',
     data: formdata,
     headers: { 'Content-Type': 'multipart/form-data' }
+  })
+}
+
+// 文章列表相关接口
+
+interface ArticleListParams {
+  current: number
+  size: number
+  keywords: string
+  tagId?: number
+  categoryId?: number
+}
+
+export function getArticleList(params: ArticleListParams): Promise<AxiosResponse<any, any>> {
+  return yhRequest.request({
+    url: '/admin/articles',
+    method: 'GET',
+    params
+  })
+}
+
+export function updateIsTopStatus(article: any): Promise<AxiosResponse<any, any>> {
+  return yhRequest.request({
+    url: '/admin/articles/top',
+    method: 'PUT',
+    data: {
+      id: article.id,
+      isTop: article.isTop
+    }
+  })
+}
+
+export function deleteArticlesApi(data: any): Promise<AxiosResponse<any, any>> {
+  return yhRequest.request({
+    url: '/admin/articles',
+    method: 'PUT',
+    data
   })
 }
