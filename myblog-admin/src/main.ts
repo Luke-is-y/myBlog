@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 import 'normalize.css'
+import '@/assets/css/base.css'
 
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
@@ -14,16 +15,6 @@ import router from './router'
 import store from './store'
 
 import '@/utils/filter'
-
-// import yhRequest from './utils/service'
-// yhRequest.request({
-//   url: '/login',
-//   method: 'POST',
-//   params: {
-//     username: 'hpf',
-//     password: '123456'
-//   }
-// })
 
 export const app = createApp(App)
 Object.keys(Icons).forEach((key) => {

@@ -1,0 +1,13 @@
+.base-page-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #202a34;
+}
+
+.base-page-title:before {
+  content: '';
+  width: 24px;
+  height: 16px;
+  border-left: 3px solid #0081ff;
+  margin-right: 20px;
+}
