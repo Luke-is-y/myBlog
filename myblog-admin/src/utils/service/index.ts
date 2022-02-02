@@ -1,14 +1,14 @@
 import YHRequest from './request/request'
 
 const yhRequest = new YHRequest({
-  // baseURL: 'http://121.5.70.94:8060',
-  baseURL: '/api',
+  baseURL: 'http://121.5.70.94:8060',
+  // baseURL: '/api',
   timeout: 5000,
   interceptors: {
     requestInterceptor: (config) => {
-      const token = window.sessionStorage.getItem('token')
+      const token = JSON.parse(window.sessionStorage.getItem('token') as string)
       if (token && config.headers) {
-        config.headers.Authorization = 'Bearer ' + token
+        config.headers[token.tokenName] = token.tokenValue
       }
       return config
     }
