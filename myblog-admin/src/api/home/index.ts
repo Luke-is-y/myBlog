@@ -1,8 +1,8 @@
 import yhRequest from '@/utils/service'
 
-export function getQiNiuToken() {
+export function getHomeData() {
   return yhRequest.request({
-    url: '/getQiniuCloudUpToken',
+    url: '/admin',
     method: 'GET'
   })
 }
