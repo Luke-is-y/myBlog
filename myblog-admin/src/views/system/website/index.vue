@@ -1,12 +1,11 @@
 <template>
-  <el-card class="main-card">
+  <el-card>
     <el-tabs v-model="activeName">
       <!-- 修改信息 -->
       <el-tab-pane label="网站信息" name="info">
         <el-form label-width="100px" :model="websiteConfigForm" label-position="left">
           <el-form-item label="网站头像">
             <el-upload
-              class="upload"
               drag
               action="http://upload-cn-east-2.qiniup.com"
               :data="{ token }"
@@ -134,7 +133,6 @@
             <el-col :md="12">
               <el-form-item label="用户头像">
                 <el-upload
-                  class="upload"
                   drag
                   action="http://upload-cn-east-2.qiniup.com"
                   :data="{ token }"
@@ -174,7 +172,6 @@
             <el-col :md="12">
               <el-form-item label="微信收款码">
                 <el-upload
-                  class="avatar-uploader"
                   action="/api/admin/config/images"
                   :show-file-list="false"
                   :on-success="handleWeiXinSuccess"
@@ -182,16 +179,13 @@
                   <img
                     v-if="websiteConfigForm.weiXinQRCode"
                     :src="websiteConfigForm.weiXinQRCode"
-                    class="avatar"
                   />
-                  <i v-else class="el-icon-plus avatar-uploader-icon" />
                 </el-upload>
               </el-form-item>
             </el-col>
             <el-col :md="12">
               <el-form-item label="支付宝收款码">
                 <el-upload
-                  class="avatar-uploader"
                   action="/api/admin/config/images"
                   :show-file-list="false"
                   :on-success="handleAlipaySuccess"
@@ -199,9 +193,7 @@
                   <img
                     v-if="websiteConfigForm.alipayQRCode"
                     :src="websiteConfigForm.alipayQRCode"
-                    class="avatar"
                   />
-                  <i v-else class="el-icon-plus avatar-uploader-icon" />
                 </el-upload>
               </el-form-item>
             </el-col>
@@ -333,34 +325,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style>
-.el-upload-dragger {
-  width: 150px;
-  height: 150px;
-}
-
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 120px;
-  height: 120px;
-  line-height: 120px;
-  text-align: center;
-}
-.avatar {
-  width: 120px;
-  height: 120px;
-  display: block;
-}
-</style>

@@ -2,9 +2,12 @@ import { createStore } from 'vuex'
 
 import VuexPersistence from 'vuex-persist'
 
+import userModule from './user/User'
+import articleModule from './article/Article'
+import categoryModule from './category/Category'
+import tagModule from './tag/Tag'
 import menuModule from './menu/Menu'
 import roleModule from './role/Role'
-import userModule from './user/User'
 import resourceModule from './resource/Resource'
 import logModule from './log/Log'
 import commentModule from './comment/Comment'
@@ -39,6 +42,9 @@ export default createStore<IRootState>({
   actions: {},
   modules: {
     userModule,
+    articleModule,
+    categoryModule,
+    tagModule,
     menuModule,
     roleModule,
     resourceModule,

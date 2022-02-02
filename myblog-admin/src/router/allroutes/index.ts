@@ -119,6 +119,6 @@ export const allRoutes = [
   {
     path: '',
     name: '个人中心',
-    component: () => import('@/views/home/index.vue')
+    component: () => import('@/views/setting/index.vue')
   }
 ]

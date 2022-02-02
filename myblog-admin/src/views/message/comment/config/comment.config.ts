@@ -13,7 +13,7 @@ export const tableConfig: ITable = {
     { prop: 'articleTitle', label: '文章标题', minWidth: '180' },
     { prop: 'commentContent', label: '评论内容', minWidth: '180' },
     { prop: 'createTime', label: '评论时间', minWidth: '180' },
-    { prop: 'status', label: '状态', minWidth: '180' },
+    { prop: 'isPublished', label: '状态', minWidth: '180' },
     { prop: 'ip', label: '来源', minWidth: '180' }
   ]
 }

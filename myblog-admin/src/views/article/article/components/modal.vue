@@ -169,7 +169,7 @@ import { useRouter } from 'vue-router'
 import { publishArticle } from '@/api/article/article'
 import { getCategories } from '@/api/article/category'
 import { getTags } from '@/api/article/tag'
-import { getQiNiuToken } from '@/api/qiniuUpToken'
+import { getQiniuToken } from '@/api/system/website'
 import { ElMessage } from 'element-plus'
 
 export default defineComponent({
@@ -303,7 +303,7 @@ export default defineComponent({
     })
 
     const getToken = () => {
-      getQiNiuToken().then((res) => {
+      getQiniuToken().then((res) => {
         token.value = res.data.data
       })
     }

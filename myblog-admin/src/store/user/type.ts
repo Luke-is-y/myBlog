@@ -1,6 +1,6 @@
 export interface IUserState {
-  id: number
-  username: string
+  user: any
   userMenuList: any[]
   userList: any[]
+  userCount: number
 }

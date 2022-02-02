@@ -8,23 +8,24 @@ import yhRequest from '@/utils/service'
 const commentModule: Module<IComment, IRootState> = {
   namespaced: true,
   state() {
-    return { commentList: [] }
+    return {
+      commentList: [],
+      commentCount: 0
+    }
   },
   mutations: {
     saveCommentList(state, payload) {
-      state.commentList = payload
+      ;(state.commentList = payload.recordList), (state.commentCount = payload.count)
     }
   },
   actions: {
     async getCommentList({ commit }, payload) {
-      console.log(payload)
-
       const res = await yhRequest.request({
         url: '/admin/comments',
         method: 'GET',
         params: payload
       })
-      commit('saveCommentList', res.data.data.recordList)
+      commit('saveCommentList', res.data.data)
     }
   }
 }

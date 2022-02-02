@@ -15,7 +15,13 @@
           />
         </el-form-item>
       </el-form>
-      <el-button type="primary" @click="login" class="login-btn">登录</el-button>
+      <el-checkbox v-model="isRemember" label="七天免登录" size="large"></el-checkbox>
+      <div class="login-and-register-btn">
+        <el-button type="primary" @click="register" class="register-btn" size="large"
+          >注册</el-button
+        >
+        <el-button type="primary" @click="login" class="login-btn" size="large">登录</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -31,9 +37,11 @@ export default defineComponent({
   setup() {
     const store = useStore()
     const router = useRouter()
+    const isRemember = ref(false)
     const loginForm = reactive({
-      username: 'hpf',
-      password: '123456'
+      username: '',
+      password: '',
+      isRemember: isRemember.value
     })
     const rules = reactive({
       username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
@@ -42,12 +50,16 @@ export default defineComponent({
 
     const ruleForm = ref<InstanceType<typeof ElForm>>()
 
+    const register = () => {
+      router.push('/register')
+    }
+
     const login = () => {
       ruleForm.value?.validate((valid) => {
         if (valid) {
           Login(loginForm).then((res) => {
-            window.sessionStorage.setItem('token', res.data.data.token)
-            if (res.data.data.info) {
+            if (res.data.data) {
+              window.sessionStorage.setItem('token', JSON.stringify(res.data.data.token))
               // 登录后保存用户信息
               store.commit('userModule/login', res.data.data.info)
               // 加载用户菜单
@@ -61,9 +73,11 @@ export default defineComponent({
     }
 
     return {
+      isRemember,
       loginForm,
       rules,
       ruleForm,
+      register,
       login
     }
   }
@@ -77,7 +91,8 @@ export default defineComponent({
   bottom: 0;
   right: 0;
   left: 0;
-  background: url(https://www.static.talkxj.com/config/0w3pdr.jpg) center center / cover no-repeat;
+  background: url(https://pic3.zhimg.com/80/v2-73c5ff9597484a1bdb4d42fe260c4aa9_r.jpg) center center /
+    cover no-repeat;
   .login-card {
     position: absolute;
     top: 0;
@@ -94,9 +109,15 @@ export default defineComponent({
     .login-form {
       margin-top: 1.2rem;
     }
-    .login-btn {
-      margin-top: 1rem;
-      width: 100%;
+
+    .login-and-register-btn {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .login-btn,
+    .register-btn {
+      flex: 1;
     }
   }
 }

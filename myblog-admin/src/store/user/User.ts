@@ -11,19 +11,26 @@ const userModule: Module<IUserState, IRootState> = {
   namespaced: true,
   state() {
     return {
-      id: 0,
-      username: '',
+      user: {
+        id: 0,
+        username: '',
+        nickname: '',
+        info: '',
+        website: '',
+        avatar: ''
+      },
       userMenuList: [],
-      userList: []
+      userList: [],
+      userCount: 0
     }
   },
   mutations: {
     login(state, user) {
-      state.id = user.id
-      state.username = user.username
+      state.user = { ...user }
     },
-    saveUserList(state, userList) {
-      state.userList = userList
+    saveUserList(state, payload) {
+      state.userList = payload.recordList
+      state.userCount = payload.count
     },
     saveUserMenuList(state, userMenuList) {
       state.userMenuList = userMenuList
@@ -48,12 +55,18 @@ const userModule: Module<IUserState, IRootState> = {
       })
     },
     logout(state) {
-      state.id = 0
-      state.username = ''
+      state.user = {
+        id: 0,
+        username: '',
+        nickname: '',
+        info: '',
+        website: '',
+        avatar: ''
+      }
       state.userMenuList = []
     },
     updateUserInfo(state, user) {
-      state.username = user.username
+      state.user.username = user.username
     }
   },
   actions: {
@@ -65,18 +78,17 @@ const userModule: Module<IUserState, IRootState> = {
       })
       window.sessionStorage.setItem('userMenu', JSON.stringify(res.data.data))
       // 添加侧边栏菜单
-      console.log(res.data.data)
-
       commit('saveUserMenuList', res.data.data)
     },
 
-    async getUserList({ commit }) {
+    async getUserList({ commit }, payload) {
       const res = await yhRequest.request({
         url: '/admin/users',
-        method: 'GET'
+        method: 'GET',
+        params: payload
       })
 
-      commit('saveUserList', res.data.data.recordList)
+      commit('saveUserList', res.data.data)
     }
   }
 }

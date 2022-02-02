@@ -4,6 +4,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
     component: () => import('@/views/login/Login.vue')
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/register/index.vue')
   }
 ]
 
@@ -13,7 +17,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.path == '/login') {
+  if (to.path == '/login' || to.path == '/register') {
     next()
   } else if (window.sessionStorage.getItem('token')) {
     next()
