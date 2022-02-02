@@ -132,8 +132,8 @@ export default defineComponent({
       emit('update:page', { ...props.page, size })
     }
 
-    const handleCurrentChange = (currentPage: number) => {
-      emit('update:page', { ...props.page, currentPage })
+    const handleCurrentChange = (current: number) => {
+      emit('update:page', { ...props.page, current })
     }
 
     const addBtn = () => {

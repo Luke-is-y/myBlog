@@ -15,24 +15,15 @@
       </el-breadcrumb>
       <!-- 右侧菜单 -->
       <div class="right-menu">
-        <!-- 全屏按钮 -->
-        <!-- <div class="screen-full" @click="fullScreen">
-          <i class="iconfont el-icon-myicwindowzoom48px" />
-        </div> -->
         <!-- 用户选项 -->
         <el-dropdown @command="handleCommand">
-          <el-avatar :size="40" :src="store.state.avatar" />
-          <i class="el-icon-caret-bottom" />
-          <el-dropdown-menu>
-            <template v-slot:dropdown>
-              <el-dropdown-item command="setting">
-                <i class="el-icon-s-custom" />个人中心
-              </el-dropdown-item>
-              <el-dropdown-item command="logout" divided>
-                <i class="iconfont el-icon-mytuichu" />退出登录
-              </el-dropdown-item>
-            </template>
-          </el-dropdown-menu>
+          <el-avatar :size="40" :src="store.state.userModule.user.avatar" />
+          <template #dropdown>
+            <el-dropdown-menu class="home__el-dropdown-menu">
+              <el-dropdown-item command="setting"> 个人中心 </el-dropdown-item>
+              <el-dropdown-item command="logout" divided> 退出登录 </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
         </el-dropdown>
       </div>
     </div>
@@ -46,7 +37,11 @@
           @click="goTo(item)"
         >
           {{ item.name }}
-          <i class="el-icon-close" v-if="item.path != '/'" @click.stop="removeTab(item)" />
+          <close
+            v-if="item.path != '/'"
+            @click.stop="removeTab(item)"
+            style="width: 12px; height: 12px"
+          />
         </span>
       </div>
       <div class="tabs-close-item" style="float: right" @click="closeAllTab">全部关闭</div>
@@ -59,8 +54,6 @@ import { defineComponent, onMounted, reactive, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 
-import axios from 'axios'
-
 import { resetRouter } from '../../router'
 export default defineComponent({
   setup() {
@@ -68,16 +61,18 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
 
-    // const isSearch = ref(false)
-    // const fullscreen = ref(false)
-
     let breadcrumbList = reactive([])
 
     onMounted(() => {
       let matched: any = route.matched.filter((item) => item.name)
       const first = matched[0]
+      console.log(matched, first)
+
       if (first && first.name !== '首页') {
         matched = [{ path: '/', name: '首页' }].concat(matched)
+      }
+      if (matched.length === 0) {
+        matched = [{ path: '/', name: '首页' }].concat({ path: '/setting', name: '个人中心' })
       }
       breadcrumbList = matched
       //保存当前页标签
@@ -91,7 +86,7 @@ export default defineComponent({
     const removeTab = (tab: any) => {
       store.commit('removeTab', tab)
       if (tab.path == route.path) {
-        var tabList = store.state.tabList
+        const tabList = store.state.tabList
         router.push({ path: tabList[tabList.length - 1].path })
       }
     }
@@ -106,9 +101,8 @@ export default defineComponent({
       }
       if (command == 'logout') {
         // 调用注销接口
-        axios.post('/api/logout')
         // 清空用户信息
-        store.commit('logout')
+        store.commit('userModule/logout')
         store.commit('resetTab')
         // 清空用户菜单
         resetRouter()
@@ -120,32 +114,6 @@ export default defineComponent({
       store.commit('resetTab')
       router.push({ path: '/' })
     }
-
-    // const fullScreen = () => {
-    //   let element = document.documentElement
-    //   if (fullscreen.value) {
-    //     if (document.exitFullscreen) {
-    //       document.exitFullscreen()
-    //     } else if (document.webkitCancelFullScreen) {
-    //       document.webkitCancelFullScreen()
-    //     } else if (document.mozCancelFullScreen) {
-    //       document.mozCancelFullScreen()
-    //     } else if (document.msExitFullscreen) {
-    //       document.msExitFullscreen()
-    //     }
-    //   } else {
-    //     if (element.requestFullscreen) {
-    //       element.requestFullscreen()
-    //     } else if (element.webkitRequestFullScreen) {
-    //       element.webkitRequestFullScreen()
-    //     } else if (element.mozRequestFullScreen) {
-    //       element.mozRequestFullScreen()
-    //     } else if (element.msRequestFullscreen) {
-    //       element.msRequestFullscreen()
-    //     }
-    //   }
-    //   fullscreen.value = !fullscreen.value
-    // }
 
     const isActive = computed(() => {
       //标签是否处于当前页
@@ -265,6 +233,9 @@ export default defineComponent({
   border-radius: 50%;
   background: #b4bccc;
   transition-duration: 0.3s;
+}
+.home__el-dropdown-menu {
+  padding: 0;
 }
 .right-menu {
   margin-left: auto;
