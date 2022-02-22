@@ -8,6 +8,9 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as Icons from '@element-plus/icons-vue'
 
+import ECharts from 'vue-echarts'
+import 'echarts'
+
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 
@@ -23,9 +26,10 @@ Object.keys(Icons).forEach((key) => {
 app.use(ElementPlus)
 app.use(mavonEditor)
 app.use(store)
-const userMenu = window.sessionStorage.getItem('userMenu')
+const userMenu = window.localStorage.getItem('userMenu')
 if (userMenu) {
   store.commit('userModule/saveUserMenuList', JSON.parse(userMenu))
 }
 app.use(router)
+app.component('v-chart', ECharts)
 app.mount('#app')
