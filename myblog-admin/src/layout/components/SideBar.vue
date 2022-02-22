@@ -9,32 +9,35 @@
       text-color="#BFCBD9"
       active-text-color="#409EFF"
     >
-      <template v-for="route of store.state.userModule.userMenuList">
+      <template v-for="val of store.state.userModule.userMenuList">
         <!-- 二级菜单 -->
-        <template v-if="route.name && route.children && !route.hidden">
-          <el-sub-menu :key="route.path" :index="route.path">
+        <template v-if="val.children && val.children.length > 0 && !val.hidden">
+          <el-sub-menu :key="val.path" :index="val.path">
             <!-- 二级菜单标题 -->
-            <template v-slot:title>
-              <i :class="route.icon" />
-              <span>{{ route.name }}</span>
+            <template #title>
+              <el-icon>
+                <component :is="val.icon"></component>
+              </el-icon>
+              <span>{{ val.name }}</span>
             </template>
             <!-- 二级菜单选项 -->
-            <template v-for="(item, index) of route.children">
-              <el-menu-item v-if="!item.hidden" :key="index" :index="item.path">
-                <i :class="item.icon" />
-                <!-- <span slot="title">{{ item.name }}</span> -->
+            <template v-for="item of val.children" :key="item.path">
+              <el-menu-item v-if="!item.hidden" :index="item.path">
+                <el-icon>
+                  <component :is="item.icon"></component>
+                </el-icon>
                 <span>{{ item.name }}</span>
               </el-menu-item>
             </template>
           </el-sub-menu>
         </template>
         <!-- 一级菜单 -->
-        <template v-else-if="!route.hidden">
-          <el-menu-item :index="route.path" :key="route.path">
-            <i :class="route.children[0].icon" />
-            <span>
-              {{ route.children[0].name }}
-            </span>
+        <template v-else-if="!val.hidden">
+          <el-menu-item :index="val.path" :key="val.path">
+            <el-icon>
+              <component :is="val.icon"></component>
+            </el-icon>
+            <span> {{ val.name }} </span>
           </el-menu-item>
         </template>
       </template>
