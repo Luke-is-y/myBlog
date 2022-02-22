@@ -1,21 +1,28 @@
 <template>
-  <div class="page-table">
+  <el-card>
     <yh-table
       :Data="logList"
       v-bind="tableConfig"
-      @search-btn="getSelectionData"
+      @search-btn="searchLog"
+      @selection="getSelectionData"
       @del-btn="isDelete = true"
+      @update:page="handlePageStatus"
+      :page="pageConfig"
+      :page-count="logCount"
     >
       <template #header>
-        <div class="title">
+        <div class="base-page-title">
           {{ route.name }}
         </div>
       </template>
-
       <template #requestMethod="scope">
         <el-tag v-if="scope.row.requestMethod" :type="tagType(scope.row.requestMethod)">
           {{ scope.row.requestMethod }}
         </el-tag>
+      </template>
+      <template #time="scope"> {{ scope.row.time + 'ms' }} </template>
+      <template #createTime="scope">
+        {{ dateFormat(scope.row.createTime) }}
       </template>
       <template #edit="scope">
         <el-button type="text" size="mini" icon="view" @click="check(scope.row)"> 查看 </el-button>
@@ -51,13 +58,13 @@
           {{ optLog.optMethod }}
         </el-form-item>
         <el-form-item label="请求参数：">
-          {{ optLog.requestParam }}
-        </el-form-item>
-        <el-form-item label="返回数据：">
-          {{ optLog.responseData }}
+          {{ optLog.requestParam.slice(1, optLog.requestParam.length - 1) }}
         </el-form-item>
         <el-form-item label="操作人员：">
-          {{ optLog.nickname }}
+          {{ optLog.username }}
+        </el-form-item>
+        <el-form-item label="浏览器：">
+          {{ optLog.browser }}
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -73,28 +80,23 @@
         <el-button type="primary" @click="deleteLog()"> 确 定 </el-button>
       </template>
     </el-dialog>
-  </div>
+  </el-card>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed, ref, onMounted } from 'vue'
+import { defineComponent, computed, ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
 import yhRequest from '@/utils/service'
 
 import YhTable from '@/components/common/table/YhTable.vue'
-import { ITable } from '@/components/common/table/types'
+import { tableConfig } from './config/log.config'
+import { dateFormat } from '@/utils/filter'
 
 export default defineComponent({
   components: {
     YhTable
-  },
-  props: {
-    tableConfig: {
-      type: Object as PropType<ITable>,
-      required: true
-    }
   },
   setup() {
     const route = useRoute()
@@ -104,10 +106,19 @@ export default defineComponent({
       listLogs()
     })
 
-    const logList = computed(() => store.state.logModule.logList)
+    const pageConfig = ref({
+      current: 1,
+      size: 10
+    })
 
+    const logList = computed(() => store.state.logModule.logList)
+    const logCount = computed(() => store.state.logModule.logCount)
     const listLogs = () => {
-      store.dispatch('logModule/getLogList', { keywords: keywords.value })
+      store.dispatch('logModule/getLogList', {
+        keywords: keywords.value,
+        size: pageConfig.value.size,
+        current: pageConfig.value.current
+      })
     }
 
     const isCheck = ref(false)
@@ -118,7 +129,8 @@ export default defineComponent({
       optMethod: '',
       requestParam: '',
       responseData: '',
-      nickname: ''
+      username: '',
+      browser: ''
     })
     const check = (Log: any) => {
       optLog.value = JSON.parse(JSON.stringify(Log))
@@ -159,14 +171,22 @@ export default defineComponent({
         }
       }
     })
-
+    const keywords = ref('')
+    const searchLog = (key: string) => {
+      keywords.value = key
+      listLogs()
+    }
     const getSelectionData = (selection: any[]) => {
       logIdList.value = selection.map((item: any) => item.id)
     }
 
-    const keywords = ref('')
+    const handlePageStatus = (page: { current: number; size: number }) => {
+      pageConfig.value = { ...page }
+      listLogs()
+    }
     return {
       route,
+      tableConfig,
       logList,
       tagType,
       isCheck,
@@ -174,39 +194,13 @@ export default defineComponent({
       deleteLog,
       optLog,
       check,
-      getSelectionData
+      searchLog,
+      getSelectionData,
+      handlePageStatus,
+      pageConfig,
+      logCount,
+      dateFormat
     }
   }
 })
 </script>
-
-<style lang="less" scoped>
-.main-card {
-  min-height: calc(100vh - 126px);
-  .title {
-    // position: absolute;
-    // left: 0;
-    font-size: 16px;
-    font-weight: 700;
-    color: #202a34;
-  }
-
-  .title:before {
-    content: '';
-    width: 24px;
-    height: 16px;
-    border-left: 3px solid #0081ff;
-    margin-right: 20px;
-  }
-  .operation-container {
-    display: flex;
-    align-items: center;
-    // margin-bottom: 1.25rem;
-    padding-top: 2.25rem;
-  }
-
-  .header {
-    padding-top: 30px;
-  }
-}
-</style>

@@ -8,13 +8,15 @@ import yhRequest from '@/utils/service'
 const logModule: Module<ILog, IRootState> = {
   namespaced: true,
   state() {
-    return { logList: [] }
+    return {
+      logList: [],
+      logCount: 0
+    }
   },
   mutations: {
     saveLogList(state, payload) {
-      console.log(payload)
-
-      state.logList = payload
+      state.logList = payload.recordList
+      state.logCount = payload.count
     }
   },
   actions: {
@@ -24,9 +26,7 @@ const logModule: Module<ILog, IRootState> = {
         method: 'GET',
         params: payload
       })
-      console.log(res.data)
-
-      commit('saveLogList', res.data.data.recordList)
+      commit('saveLogList', res.data.data)
     }
   }
 }
