@@ -228,9 +228,8 @@ export default defineComponent({
         return false
       }
       roleForm.value.resourceIdList = []
-      roleForm.value.menuIdList = menuTree.value
-        .getCheckedKeys(false)
-        .concat(menuTree.value.getHalfCheckedKeys())
+
+      roleForm.value.menuIdList = menuTree.value.getCheckedKeys(false)
 
       updateRoleMenu(roleForm.value).then((res) => {
         if (res.data.code) {

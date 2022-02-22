@@ -96,7 +96,7 @@
               v-for="(item, index) of tagList"
               :key="index"
               :class="tagClass(item)"
-              @click="addTag(item)"
+              @click="addTag(item['tagName'])"
             >
               {{ item['tagName'] }}
             </el-tag>
@@ -194,7 +194,7 @@ export default defineComponent({
       getToken()
     })
 
-    const article = ref({ ...props.articleData })
+    const article = ref(JSON.parse(JSON.stringify(props.articleData)))
     const categoryName = ref('')
     const categoryList = ref([])
     const tagName = ref('')
@@ -206,7 +206,7 @@ export default defineComponent({
     watch(
       () => props.articleData,
       (newData) => {
-        article.value = { ...newData }
+        article.value = JSON.parse(JSON.stringify(newData))
       },
       {
         deep: true
@@ -276,22 +276,18 @@ export default defineComponent({
 
     const saveTag = () => {
       if (tagName.value.trim() != '') {
-        addTag({
-          tagName: tagName.value
-        })
+        addTag(tagName.value)
         tagName.value = ''
       }
     }
 
     const handleSelectTag = (item: any) => {
-      addTag({
-        tagName: item.tagName
-      })
+      addTag(item.tagName)
     }
 
-    const addTag = (item: any) => {
-      if (article.value.tagNameList.indexOf(item.tagName) == -1) {
-        article.value.tagNameList.push(item.tagName)
+    const addTag = (tagName: string) => {
+      if (article.value.tagNameList.indexOf(tagName) == -1) {
+        article.value.tagNameList.push(tagName)
       }
     }
 
@@ -313,8 +309,6 @@ export default defineComponent({
     }
 
     const hideModal = () => {
-      console.log('hide modal')
-
       emit('changeModalStatus', false)
     }
 

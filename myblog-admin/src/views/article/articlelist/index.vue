@@ -25,7 +25,7 @@
           <el-select
             clearable
             size="small"
-            v-model="categoryId"
+            v-model="searchConfig.categoryId"
             filterable
             placeholder="请选择分类"
             style="margin-right: 1rem"
@@ -41,7 +41,7 @@
           <el-select
             clearable
             size="small"
-            v-model="tagId"
+            v-model="searchConfig.tagId"
             filterable
             placeholder="请选择标签"
             style="margin-right: 1rem"
@@ -57,7 +57,7 @@
           <!-- 文章名 -->
           <el-input
             clearable
-            v-model="keywords"
+            v-model="searchConfig.keywords"
             prefix-icon="el-icon-search"
             size="small"
             placeholder="请输入文章名"
@@ -125,7 +125,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue'
+import { defineComponent, computed, ref, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -135,6 +135,7 @@ import { tableConfig } from './config/articleList.config'
 import { updateIsTopStatus, deleteArticlesApi } from '@/api/article/article'
 
 import { dateFormat } from '@/utils/filter'
+import * as _ from 'lodash'
 
 export default defineComponent({
   components: {
@@ -167,19 +168,26 @@ export default defineComponent({
       current: 1,
       size: 10
     })
-    const categoryId = ref(null)
-    const tagId = ref(null)
-
     const keywords = ref('')
+
+    const searchConfig = ref({
+      categoryId: null,
+      tagId: null,
+      keywords: ''
+    })
+
+    watch(searchConfig.value, () => {
+      listArticles()
+    })
 
     // 获取文章列表数据
     const listArticles = () => {
       store.dispatch('articleModule/getArticleList', {
         current: pageConfig.value.current,
         size: pageConfig.value.size,
-        keywords: keywords.value,
-        categoryId: categoryId.value,
-        tagId: tagId.value,
+        keywords: searchConfig.value.keywords,
+        categoryId: searchConfig.value.categoryId,
+        tagId: searchConfig.value.tagId,
         status: articleStatus.value
       })
     }
@@ -245,9 +253,7 @@ export default defineComponent({
     }
 
     const changeSelectData = (data: any) => {
-      data.forEach((item: any) => {
-        articleIdList.value.push(item.id)
-      })
+      articleIdList.value = data.map((item: any) => item.id)
     }
 
     // 处理分页
@@ -268,10 +274,8 @@ export default defineComponent({
       articleList,
       articleCount,
       categoryList,
-      categoryId,
       tagList,
-      tagId,
-      keywords,
+      searchConfig,
       changeStauts,
       isActive,
       changeTop,
