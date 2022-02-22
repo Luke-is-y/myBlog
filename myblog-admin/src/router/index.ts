@@ -8,6 +8,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/register',
     component: () => import('@/views/register/index.vue')
+  },
+  {
+    path: '/index',
+    name: 'index',
+    component: () => import('@/layout/index.vue'),
+    children: []
   }
 ]
 
@@ -19,17 +25,11 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.path == '/login' || to.path == '/register') {
     next()
-  } else if (window.sessionStorage.getItem('token')) {
+  } else if (window.localStorage.getItem('token')) {
     next()
   } else {
     next('/login')
   }
 })
-
-export function resetRouter(): void {
-  // console.log(router)
-  // const newRouter = createRouter()
-  // router.matcher = createRouter().matcher
-}
 
 export default router

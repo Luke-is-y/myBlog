@@ -1,16 +1,8 @@
 export const allRoutes = [
   {
     path: '/',
-    component: () => import('@/layout/index.vue')
-  },
-  {
-    path: '',
     name: '首页',
     component: () => import('@/views/home/index.vue')
-  },
-  {
-    path: '/article-submenu',
-    component: () => import('@/layout/index.vue')
   },
   {
     path: '/articles',
@@ -33,10 +25,6 @@ export const allRoutes = [
     component: () => import('@/views/article/tag/index.vue')
   },
   {
-    path: '/message-submenu',
-    component: () => import('@/layout/index.vue')
-  },
-  {
     path: '/comments',
     component: () => import('@/views/message/comment/index.vue')
   },
@@ -45,16 +33,8 @@ export const allRoutes = [
     component: () => import('@/views/message/leavemessage/index.vue')
   },
   {
-    path: '/users-submenu',
-    component: () => import('@/layout/index.vue')
-  },
-  {
     path: '/users',
     component: () => import('@/views/user/userlist/index.vue')
-  },
-  {
-    path: '/permission-submenu',
-    component: () => import('@/layout/index.vue')
   },
   {
     path: '/roles',
@@ -67,10 +47,6 @@ export const allRoutes = [
   {
     path: '/menus',
     component: () => import('@/views/permission/menu/index.vue')
-  },
-  {
-    path: '/system-submenu',
-    component: () => import('@/layout/index.vue')
   },
   {
     path: '/website',
@@ -89,10 +65,6 @@ export const allRoutes = [
     component: () => import('@/views/system/about/index.vue')
   },
   {
-    path: '/album-submenu',
-    component: () => import('@/layout/index.vue')
-  },
-  {
     path: '/albums',
     component: () => import('@/views/album/Album.vue')
   },
@@ -105,19 +77,15 @@ export const allRoutes = [
     component: () => import('@/views/album/Delete.vue')
   },
   {
-    path: '/log-submenu',
-    component: () => import('@/layout/index.vue')
+    path: '/operation/log',
+    component: () => import('@/views/log/operationlog/index.vue')
   },
   {
-    path: '/operation/log',
-    component: () => import('@/views/log/index.vue')
+    path: '/operation/errlog',
+    component: () => import('@/views/log/errorlog/index.vue')
   },
   {
     path: '/setting',
-    component: () => import('@/layout/index.vue')
-  },
-  {
-    path: '',
     name: '个人中心',
     component: () => import('@/views/setting/index.vue')
   }
