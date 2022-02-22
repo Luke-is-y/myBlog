@@ -28,6 +28,7 @@ import { defineComponent, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getArticleContent, uploadImg } from '@/api/article/article'
+import { getQiniuToken } from '@/api/system/website'
 import modal from './components/modal.vue'
 
 export default defineComponent({
@@ -46,11 +47,12 @@ export default defineComponent({
           article.value = res.data.data
         })
       } else {
-        const art = sessionStorage.getItem('article')
+        const art = localStorage.getItem('article')
         if (art) {
           article.value = JSON.parse(art)
         }
       }
+      getToken()
     })
     const showModal = ref(false)
     const token = ref('')
@@ -67,6 +69,12 @@ export default defineComponent({
       isCommentEnabled: false,
       isAppreciation: false
     })
+
+    const getToken = () => {
+      getQiniuToken().then((res) => {
+        token.value = res.data.data
+      })
+    }
     const openModel = () => {
       if (article.value.articleTitle.trim() == '') {
         ElMessage({
