@@ -115,7 +115,7 @@ export default defineComponent({
       }
       updateUserInfo(infoForm.value).then((res) => {
         if (res.data.code) {
-          store.commit('updateUserInfo', infoForm)
+          store.commit('userModule/updateUserInfo', infoForm.value)
         }
       })
     }

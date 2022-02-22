@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios'
 import type { YhRequestInterceptor, YhRequestConfig } from './type'
 import { ElLoading, ElMessage } from 'element-plus'
 import { LoadingInstance } from 'element-plus/lib/components/loading/src/loading'
+import router from '@/router'
 
 const DEFAULT_LOADING = false
 
@@ -49,6 +50,13 @@ export default class YHRequest {
       (res) => {
         // 对结果处理
         this.loading?.close()
+        if (res.data.code === 2000) {
+          ElMessage({
+            message: '登录信息已过期，请重新登录',
+            type: 'error'
+          })
+          router.push('/login')
+        }
         if (res.data.success) {
           if (res.data.msg) {
             ElMessage({
@@ -56,7 +64,8 @@ export default class YHRequest {
               type: 'success'
             })
           }
-        } else {
+        }
+        if (res.data.success === false) {
           ElMessage({
             message: res.data.msg,
             type: 'error'

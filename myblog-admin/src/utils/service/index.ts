@@ -6,7 +6,10 @@ const yhRequest = new YHRequest({
   timeout: 5000,
   interceptors: {
     requestInterceptor: (config) => {
-      const token = JSON.parse(window.sessionStorage.getItem('token') as string)
+      let token
+      if (window.localStorage.getItem('token')) {
+        token = JSON.parse(window.localStorage.getItem('token') as string)
+      }
       if (token && config.headers) {
         config.headers[token.tokenName] = token.tokenValue
       }

@@ -1,5 +1,4 @@
 import { createStore } from 'vuex'
-
 import VuexPersistence from 'vuex-persist'
 
 import userModule from './user/User'
@@ -10,11 +9,12 @@ import menuModule from './menu/Menu'
 import roleModule from './role/Role'
 import resourceModule from './resource/Resource'
 import logModule from './log/Log'
+import errlogModule from './errlog/Errlog'
 import commentModule from './comment/Comment'
 import { IRootState } from './types'
 
 const vuexLocal = new VuexPersistence({
-  storage: window.sessionStorage
+  storage: window.localStorage
 })
 export default createStore<IRootState>({
   state: {
@@ -35,7 +35,7 @@ export default createStore<IRootState>({
     resetTab(state) {
       state.tabList = [{ name: '首页', path: '/' }]
     },
-    trigger(state) {
+    changeIsFold(state) {
       state.collapse = !state.collapse
     }
   },
@@ -49,6 +49,7 @@ export default createStore<IRootState>({
     roleModule,
     resourceModule,
     logModule,
+    errlogModule,
     commentModule
   },
   plugins: [vuexLocal.plugin]

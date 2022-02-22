@@ -16,7 +16,7 @@ const userModule: Module<IUserState, IRootState> = {
         username: '',
         nickname: '',
         info: '',
-        website: '',
+        webSite: '',
         avatar: ''
       },
       userMenuList: [],
@@ -36,22 +36,19 @@ const userModule: Module<IUserState, IRootState> = {
       state.userMenuList = userMenuList
       // 添加菜单到路由
       userMenuList.forEach((item: any) => {
-        if (item.icon != null) {
-          item.icon = 'iconfont ' + item.icon
-        }
-        item.component = allRoutes.find((val) => {
-          return item.path === val.path
-        })?.component
-
         if (item.children && item.children.length > 0) {
           item.children.forEach((route: any) => {
-            route.icon = 'iconfont ' + route.icon
             route.component = allRoutes.find((item) => {
               return route.path ? item.path === route.path : item.name === route.name
             })?.component
+            router.addRoute('index', route)
           })
+        } else {
+          item.component = allRoutes.find((val) => {
+            return item.path === val.path
+          })?.component
+          router.addRoute('index', item)
         }
-        router.addRoute(item)
       })
     },
     logout(state) {
@@ -60,13 +57,13 @@ const userModule: Module<IUserState, IRootState> = {
         username: '',
         nickname: '',
         info: '',
-        website: '',
+        webSite: '',
         avatar: ''
       }
       state.userMenuList = []
     },
     updateUserInfo(state, user) {
-      state.user.username = user.username
+      state.user = { ...user }
     }
   },
   actions: {
@@ -76,7 +73,7 @@ const userModule: Module<IUserState, IRootState> = {
         url: '/admin/user/menus',
         method: 'GET'
       })
-      window.sessionStorage.setItem('userMenu', JSON.stringify(res.data.data))
+      window.localStorage.setItem('userMenu', JSON.stringify(res.data.data))
       // 添加侧边栏菜单
       commit('saveUserMenuList', res.data.data)
     },

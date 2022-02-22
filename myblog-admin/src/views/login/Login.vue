@@ -59,12 +59,18 @@ export default defineComponent({
         if (valid) {
           Login(loginForm).then((res) => {
             if (res.data.data) {
-              window.sessionStorage.setItem('token', JSON.stringify(res.data.data.token))
+              window.localStorage.setItem(
+                'token',
+                JSON.stringify({
+                  tokenName: res.data.data.tokenName,
+                  tokenValue: res.data.data.tokenValue
+                })
+              )
               // 登录后保存用户信息
-              store.commit('userModule/login', res.data.data.info)
+              store.commit('userModule/login', res.data.data)
               // 加载用户菜单
               store.dispatch('userModule/generaMenu').then(() => {
-                router.push('/')
+                router.push('index/')
               })
             }
           })
